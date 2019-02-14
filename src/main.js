@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import '@/assets/css/base.css'
 // 所有插件都要这样用
 Vue.use(ElementUI)
 
