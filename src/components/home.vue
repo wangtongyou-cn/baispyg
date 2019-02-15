@@ -32,7 +32,7 @@
               <span>用户管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="1-1"><i class="el-icon-menu"></i>用户列表</el-menu-item>
+              <el-menu-item index="users"><i class="el-icon-menu"></i>用户列表</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
@@ -78,7 +78,9 @@
         </el-menu>
       </el-aside>
 
-      <el-main class="main">Main</el-main>
+      <el-main class="main">
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -116,7 +118,7 @@ export default {
   background-color: #fff;
 }
 .main {
-  background-color: green;
+  background-color: #999;
 }
 .middle {
   line-height: 60px;
