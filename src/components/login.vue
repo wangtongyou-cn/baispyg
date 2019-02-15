@@ -9,7 +9,8 @@
       <el-form-item label="密码">
         <el-input v-model="formdata.password"></el-input>
       </el-form-item>
-        <el-button class="login-button" type="success">登录</el-button>
+        <el-button 
+        @click.prevent="handleLogin()" class="login-button" type="success">登录</el-button>
     </el-form>
   </div>
 </template>
@@ -23,6 +24,22 @@ export default {
             password:''
         }
     };
+  },
+  methods: {
+    handleLogin(){
+      //前提api-server->node app启动服务器
+      this.$http.post(`login`,this.formdata)
+      .then((res)=> {
+        console.log(res)
+        const {data:{data,meta:{msg,status}}} = res
+        if(status === 200) {
+          console.log('success--')
+        } else {
+          // console.log('err---')
+           this.$message.error(msg)
+        }
+      })
+    }
   }
 };
 </script>
