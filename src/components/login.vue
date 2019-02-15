@@ -26,14 +26,14 @@ export default {
     };
   },
   methods: {
-    handleLogin(){
+    async handleLogin(){
+      //ES7新特性 async await
+      
       //前提api-server->node app启动服务器
-      this.$http.post(`login`,this.formdata)
-      .then((res)=> {
-        console.log(res)
-        //多层对象解构赋值
-        const {data:{data,meta:{msg,status}}} = res
-        if(status === 200) {
+      const res = await this.$http.post(`login`,this.formdata)
+      console.log(res)
+      const {data:{data,meta:{msg,status}}} = res
+      if(status === 200) {
           // console.log('success--')
           this.$router.push({
             name:"home"
@@ -42,7 +42,21 @@ export default {
           // console.log('err---')
            this.$message.error(msg)
         }
-      })
+        
+      // .then((res)=> {
+      //   console.log(res)
+      //   //多层对象解构赋值
+      //   const {data:{data,meta:{msg,status}}} = res
+      //   if(status === 200) {
+      //     // console.log('success--')
+      //     this.$router.push({
+      //       name:"home"
+      //     })
+      //   } else {
+      //     // console.log('err---')
+      //      this.$message.error(msg)
+      //   }
+      // })
     }
   }
 };
