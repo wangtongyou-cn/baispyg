@@ -15,36 +15,36 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       formdata: {
-        username: "",
-        password: ""
+        username: '',
+        password: ''
       }
-    };
+    }
   },
   methods: {
-    async handleLogin() {
-      //ES7新特性 async await
+    async handleLogin () {
+      // ES7新特性 async await
 
-      //前提api-server->node app启动服务器
-      const res = await this.$http.post(`login`, this.formdata);
-      console.log(res);
+      // 前提api-server->node app启动服务器
+      const res = await this.$http.post(`login`, this.formdata)
+      console.log(res)
       const {
         data: {
           data: { token },
           meta: { msg, status }
         }
-      } = res;
+      } = res
       if (status === 200) {
-        localStorage.setItem("token",token)
+        localStorage.setItem('token', token)
         // console.log('success--')
         this.$router.push({
-          name: "home"
-        });
+          name: 'home'
+        })
       } else {
         // console.log('err---')
-        this.$message.error(msg);
+        this.$message.error(msg)
       }
 
       // .then((res)=> {
@@ -63,9 +63,9 @@ export default {
       // })
     }
   }
-};
+}
 </script>
-    
+
 <style>
 .login-wrap {
   /* 注意: 百分比布局 父元素height */
