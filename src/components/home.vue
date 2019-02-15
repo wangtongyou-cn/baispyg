@@ -19,8 +19,7 @@
         <el-menu
           default-active="2"
           class="el-menu-vertical-demo"
-          @open="handleOpen"
-          @close="handleClose"
+         
           background-color="#fff"
           text-color="black"
           active-text-color="#ffd04b"
@@ -78,14 +77,32 @@
         
         </el-menu>
       </el-aside>
-      
+
       <el-main class="main">Main</el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
-export default {};
+export default {
+  // 检查用户是否登录 token
+  // beforeMount() {
+  //   if(!localStorage.getItem("token")) {
+  //     this.$router.push({
+  //       name: 'login'
+  //     });
+  //     this.$message.warning("请先登录")
+  //   }
+  // }
+  beforeMount() {
+    if(!localStorage.getItem("token")) {
+      this.$router.push({
+        name: 'login'
+      });
+      this.$message.warning("请先登录")
+    }
+  }
+};
 </script>
 
 <style>
