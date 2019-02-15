@@ -31,9 +31,13 @@ export default {
       this.$http.post(`login`,this.formdata)
       .then((res)=> {
         console.log(res)
+        //多层对象解构赋值
         const {data:{data,meta:{msg,status}}} = res
         if(status === 200) {
-          console.log('success--')
+          // console.log('success--')
+          this.$router.push({
+            name:"home"
+          })
         } else {
           // console.log('err---')
            this.$message.error(msg)
