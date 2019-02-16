@@ -66,22 +66,22 @@
 
       <el-form label-position="left" label-width="80px" :model="formdata">
         <el-form-item label="用户名">
-          <el-input v-model="formdata.name"></el-input>
+          <el-input v-model="formdata.username"></el-input>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input v-model="formdata.region"></el-input>
+          <el-input v-model="formdata.password"></el-input>
         </el-form-item>
         <el-form-item label="邮箱">
-          <el-input v-model="formdata.type"></el-input>
+          <el-input v-model="formdata.email"></el-input>
         </el-form-item>
         <el-form-item label="电话">
-          <el-input v-model="formdata.type"></el-input>
+          <el-input v-model="formdata.mobil"></el-input>
         </el-form-item>
       </el-form>
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisibleAdd = false">确 定</el-button>
+        <el-button type="primary" @click="addUser()">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -110,8 +110,17 @@ export default {
     this.getTableDate();
   },
   methods: {
+    async addUser() {
+      const res = await this.$http.post(`users`,this.formdata);
+      const {meta: {msg,status}} = res.data;
+      if(status === 200) {
+        this.dialogFormVisibleAdd = false;
+        this.getTableDate();
+      }
+    },
     showDiaAddUser() {
-      this.dialogFormVisibleAdd = true
+      this.dialogFormVisibleAdd = true;
+      this.formdata = {}
     },
     //搜索
     getAllUser() {
