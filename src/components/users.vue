@@ -19,21 +19,29 @@
     </el-row>
     <!-- 表格部分 -->
     <!-- el-table 表格 data 绑定数据[]
-    el-table-column 控制的是列 -->
+    el-table-column 控制的是列-->
     <el-table :data="list" style="width: 100%">
       <el-table-column prop="id" label="#" width="80"></el-table-column>
       <el-table-column prop="username" label="姓名" width="120"></el-table-column>
       <el-table-column prop="email" label="邮箱" width="140"></el-table-column>
       <el-table-column prop="mobile" label="电话" width="140"></el-table-column>
       <!-- slot-scope -->
-      <el-table-column  label="创建日期" width="140">
-        <template slot-scope="scope">
-          {{scope.row.create_time | fmtdate}}
-        </template>  
+      <el-table-column label="创建日期" width="140">
+        <template slot-scope="scope">{{scope.row.create_time | fmtdate}}</template>
       </el-table-column>
 
-      <el-table-column prop="address" label="用户状态" width="140"></el-table-column>
-      <el-table-column prop="address" label="操作" width="200"></el-table-column>
+      <el-table-column prop="address" label="用户状态" width="140">
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.mg_status" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column prop="address" label="操作" width="200">
+        <template slot-scope="scope">
+          <el-button type="primary" icon="el-icon-edit" size="mini" circle  plain></el-button>
+          <el-button type="delete" icon="el-icon-delete" size="mini"  plain circle></el-button>
+          <el-button type="success" icon="el-icon-check" size="mini" circle  plain></el-button>
+        </template>
+      </el-table-column>
     </el-table>
   </el-card>
 </template>
@@ -45,7 +53,7 @@ export default {
       query: "",
       pagenum: "1",
       pagesize: "3",
-    //   表格数据
+      //   表格数据
       list: []
     };
   },
@@ -54,18 +62,24 @@ export default {
   },
   methods: {
     async getTableDate() {
+      //登录请求之外的请求都需要授权,发请求之前需要设置请求头
 
-      //登录请求之外的请求都需要授权,发请求之前需要设置请求头 
-      
-        // ContentType:text/html;
+      // ContentType:text/html;
       const AUTH_TOKEN = localStorage.getItem("token");
       this.$http.defaults.headers.common["Authorization"] = AUTH_TOKEN;
 
-      const res =await this.$http.get(`users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
-      console.log(res)
+      const res = await this.$http.get(
+        `users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${
+          this.pagesize
+        }`
+      );
+      console.log(res);
       //渲染数据
-      const {data,meta:{msg,status}} = res.data;
-      if(status === 200) {
+      const {
+        data,
+        meta: { msg, status }
+      } = res.data;
+      if (status === 200) {
         this.list = data.users;
       }
     }

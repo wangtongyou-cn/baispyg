@@ -16,8 +16,8 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
-Vue.filter('fmtdate',(v)=>{
-  return moment(v).format('YYYY-MM-DD');
+Vue.filter('fmtdate', (v) => {
+  return moment(v).format('YYYY-MM-DD')
 })
 /* eslint-disable no-new */
 new Vue({
