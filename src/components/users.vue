@@ -49,27 +49,8 @@
             size="mini"
             circle
             plain
-            @click="showDiaEditUser()"
-          >
-            <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
-              <el-form label-position="left" label-width="80px" :model="formdata">
-                <el-form-item label="用户名">
-                  <el-input v-model="formdata.username"></el-input>
-                </el-form-item>
-                <el-form-item label="邮箱">
-                  <el-input v-model="formdata.email"></el-input>
-                </el-form-item>
-                <el-form-item label="电话">
-                  <el-input v-model="formdata.mobil"></el-input>
-                </el-form-item>
-              </el-form>
-
-              <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
-                <el-button type="primary" @click="addUser()">确 定</el-button>
-              </div>
-            </el-dialog>
-          </el-button>
+            @click="showDiaEditUser(scope.row)"
+          ></el-button>
           <el-button
             type="delete"
             icon="el-icon-delete"
@@ -108,13 +89,32 @@
           <el-input v-model="formdata.email"></el-input>
         </el-form-item>
         <el-form-item label="电话">
-          <el-input v-model="formdata.mobil"></el-input>
+          <el-input v-model="formdata.mobile"></el-input>
         </el-form-item>
       </el-form>
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
         <el-button type="primary" @click="addUser()">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 编辑用户的对话框 -->
+    <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
+      <el-form label-position="left" label-width="80px" :model="formdata">
+        <el-form-item label="用户名">
+          <el-input disabled v-model="formdata.username"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="formdata.email"></el-input>
+        </el-form-item>
+        <el-form-item label="电话">
+          <el-input v-model="formdata.mobile"></el-input>
+        </el-form-item>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+        <el-button type="primary" @click="editUser()">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -136,7 +136,7 @@ export default {
         username: "",
         password: "",
         email: "",
-        mobil: ""
+        mobile: ""
       }
     };
   },
@@ -144,10 +144,22 @@ export default {
     this.getTableDate();
   },
   methods: {
-    //编辑
-    showDiaEditUser() {
-     this.dialogFormVisibleEdit=true;
+    //编辑用户
+    async editUser() {
+      const res = await this.$http.put(`users/${this.formdata.id}`,this.formdata);
+       const {
+            meta: { msg, status }
+          } = res.data;
+      this.dialogFormVisibleEdit=false;
+      this.getTableDate();
     },
+    showDiaEditUser(user) {
+      //获取用户数据
+      this.formdata = user;
+
+      this.dialogFormVisibleEdit = true;
+    },
+
     //删除
     showMsgBoxDele(user) {
       this.$confirm("是否删除", "提示", {
@@ -163,12 +175,15 @@ export default {
           if (status === 200) {
             this.$message.success(msg);
             this.getTableDate();
+            this.pagenum = 1;
           }
         })
         .catch(() => {
           this.$message.info("已取消删除");
         });
     },
+
+    //添加
     async addUser() {
       const res = await this.$http.post(`users`, this.formdata);
       const {
