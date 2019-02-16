@@ -11,8 +11,10 @@
     <!-- 搜素 -->
     <el-row class="search">
       <el-col>
-        <el-input placeholder="请输入内容" v-model="query" class="searchInput">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-input placeholder="请输入内容" v-model="query" class="searchInput" clearable
+        @clear="getAllUser()">
+          <el-button slot="append" icon="el-icon-search"
+          @click="searchUser()"></el-button>
         </el-input>
         <el-button type="success" plain>添加用户</el-button>
       </el-col>
@@ -45,11 +47,11 @@
 
     <!-- 分页 -->
     <el-pagination
-    class="page"
+      class="page"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="pagenum"
-      :page-sizes="[2,4,6,8]"
+      :page-sizes="[2,3,4,6,8]"
       :page-size="2"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
@@ -73,9 +75,16 @@ export default {
     this.getTableDate();
   },
   methods: {
+    //搜索
+    getAllUser() {
+       this.getTableDate();
+    },
+    searchUser() {
+      this.pagenum = 1;
+      this.getTableDate();
+    },
     async getTableDate() {
       //登录请求之外的请求都需要授权,发请求之前需要设置请求头
-
       // ContentType:text/html;
       const AUTH_TOKEN = localStorage.getItem("token");
       this.$http.defaults.headers.common["Authorization"] = AUTH_TOKEN;
@@ -99,11 +108,10 @@ export default {
     //分页
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
-      this.pagenum =1;
+      this.pagenum = 1;
       this.pagesize = val;
       this.getTableDate();
     },
-
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
       this.pagenum = val;
