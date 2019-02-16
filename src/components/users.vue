@@ -20,16 +20,15 @@
     <!-- 表格部分 -->
     <!-- el-table 表格 data 绑定数据[]
     el-table-column 控制的是列-->
-    <el-table :data="list" style="width: 100%">
+    <el-table :data="list" style="width: 100%" height="350px">
       <el-table-column prop="id" label="#" width="80"></el-table-column>
       <el-table-column prop="username" label="姓名" width="120"></el-table-column>
       <el-table-column prop="email" label="邮箱" width="140"></el-table-column>
       <el-table-column prop="mobile" label="电话" width="140"></el-table-column>
-      <!-- slot-scope -->
+      <!-- 单元格内容不是prop的值  slot-scope -->
       <el-table-column label="创建日期" width="140">
         <template slot-scope="scope">{{scope.row.create_time | fmtdate}}</template>
       </el-table-column>
-
       <el-table-column prop="address" label="用户状态" width="140">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.mg_status" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
@@ -37,12 +36,24 @@
       </el-table-column>
       <el-table-column prop="address" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button type="primary" icon="el-icon-edit" size="mini" circle  plain></el-button>
-          <el-button type="delete" icon="el-icon-delete" size="mini"  plain circle></el-button>
-          <el-button type="success" icon="el-icon-check" size="mini" circle  plain></el-button>
+          <el-button type="primary" icon="el-icon-edit" size="mini" circle plain></el-button>
+          <el-button type="delete" icon="el-icon-delete" size="mini" plain circle></el-button>
+          <el-button type="success" icon="el-icon-check" size="mini" circle plain></el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- 分页 -->
+    <el-pagination
+    class="page"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagenum"
+      :page-sizes="[2,4,6,8]"
+      :page-size="2"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+    ></el-pagination>
   </el-card>
 </template>
 
@@ -51,8 +62,9 @@ export default {
   data() {
     return {
       query: "",
-      pagenum: "1",
-      pagesize: "3",
+      pagenum: 1,
+      pagesize: 2,
+      total: -1,
       //   表格数据
       list: []
     };
@@ -81,13 +93,30 @@ export default {
       } = res.data;
       if (status === 200) {
         this.list = data.users;
+        this.total = data.total;
       }
+    },
+    //分页
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.pagenum =1;
+      this.pagesize = val;
+      this.getTableDate();
+    },
+
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.pagenum = val;
+      this.getTableDate();
     }
   }
 };
 </script>
 
 <style>
+.page {
+  margin-top: 20px;
+}
 .box {
   height: 100%;
 }
