@@ -37,7 +37,13 @@
       </el-table-column>
       <el-table-column prop="address" label="用户状态" width="140">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.mg_status" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          <!-- 开关 -->
+          <el-switch
+            v-model="scope.row.mg_state"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            @change="changeState(scope.row)"
+          ></el-switch>
         </template>
       </el-table-column>
       <el-table-column prop="address" label="操作" width="200">
@@ -51,6 +57,7 @@
             plain
             @click="showDiaEditUser(scope.row)"
           ></el-button>
+          <!-- 删除按钮 -->
           <el-button
             type="delete"
             icon="el-icon-delete"
@@ -144,13 +151,24 @@ export default {
     this.getTableDate();
   },
   methods: {
+    //开关按钮修改状态
+    async changeState(user) {
+      // console.log(user)
+      const res = await this.$http.put(
+        `users/${user.id}/state/${user.mg_state}`
+      );
+      console.log(res);
+    },
     //编辑用户
     async editUser() {
-      const res = await this.$http.put(`users/${this.formdata.id}`,this.formdata);
-       const {
-            meta: { msg, status }
-          } = res.data;
-      this.dialogFormVisibleEdit=false;
+      const res = await this.$http.put(
+        `users/${this.formdata.id}`,
+        this.formdata
+      );
+      const {
+        meta: { msg, status }
+      } = res.data;
+      this.dialogFormVisibleEdit = false;
       this.getTableDate();
     },
     showDiaEditUser(user) {
@@ -218,7 +236,7 @@ export default {
           this.pagesize
         }`
       );
-      console.log(res);
+      // console.log(res);
       //渲染数据
       const {
         data,
