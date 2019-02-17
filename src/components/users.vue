@@ -66,6 +66,7 @@
             plain
             circle
           ></el-button>
+          <!-- 对勾按钮 -->
           <el-button type="success" icon="el-icon-check" size="mini" circle plain></el-button>
         </template>
       </el-table-column>
