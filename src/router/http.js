@@ -20,5 +20,4 @@ HttpServer.install = function (Vue, options) {
   const AUTH_TOKEN = localStorage.getItem('token')
   Vue.prototype.$http = axios
 }
-
-export default HttpServer
+export default HttpServer;
