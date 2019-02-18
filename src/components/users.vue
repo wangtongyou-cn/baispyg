@@ -228,10 +228,12 @@ export default {
       this.dialogFormVisibleEdit = false
       this.getTableDate()
     },
-    showDiaEditUser (user) {
+    async showDiaEditUser (user) {
       // 获取用户数据
-      this.formdata = user
-
+      // this.formdata = user
+      const res = await this.$http.get(`users/${user.id}`);
+      this.formdata = res.data.data;
+      
       this.dialogFormVisibleEdit = true
     },
 
