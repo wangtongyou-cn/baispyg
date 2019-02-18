@@ -6,7 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import '@/assets/css/base.css'
 import App from './App'
 import CusBread from '@/components/cusBread.vue'
-import HttpServer from '@/http.js'
+import HttpServer from './router/http'
 import router from './router'
 import moment from 'moment'
 // 所有的Vue插件都是这样用
