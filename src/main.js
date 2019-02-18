@@ -6,19 +6,22 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/assets/css/base.css'
-import axios from 'axios'
 import moment from 'moment'
-axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
-Vue.prototype.$http = axios
-
+import CusBread from '@/components/cusBread.vue'
+import HttpServer from './router/http'
 // 所有插件都要这样用
-Vue.use(ElementUI)
+// Vue.use(axios.js)
 
+// Vue插件的用法
+Vue.use(ElementUI)
 Vue.config.productionTip = false
 
+// 开发插件
+Vue.use(HttpServer)
 Vue.filter('fmtdate', (v) => {
   return moment(v).format('YYYY-MM-DD')
 })
+Vue.component('cusBread', CusBread)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

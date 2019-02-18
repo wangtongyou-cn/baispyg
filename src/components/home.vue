@@ -19,7 +19,7 @@
         <el-menu
           default-active="2"
           class="el-menu-vertical-demo"
-         
+
           background-color="#fff"
           text-color="black"
           active-text-color="#ffd04b"
@@ -42,7 +42,7 @@
             </template>
             <el-menu-item-group>
               <el-menu-item index="1-1"><i class="el-icon-menu"></i>角色列表</el-menu-item>
-              <el-menu-item index="1-1"><i class="el-icon-menu"></i>权限列表</el-menu-item>
+              <el-menu-item index="rights"><i class="el-icon-menu"></i>权限列表</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">
@@ -74,7 +74,7 @@
               <el-menu-item index="1-1"><i class="el-icon-menu"></i>数据报表</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-        
+
         </el-menu>
       </el-aside>
 
@@ -88,25 +88,25 @@
 <script>
 export default {
   // 检查用户是否登录 token
-  beforeMount() {
-    if(!localStorage.getItem("token")) {
+  beforeMount () {
+    if (!localStorage.getItem('token')) {
       this.$router.push({
         name: 'login'
-      });
-      this.$message.warning("请先登录")
+      })
+      this.$message.warning('请先登录')
     }
   },
   methods: {
-    //退出按钮
-    handleLoginout(){
-      localStorage.clear();
+    // 退出按钮
+    handleLoginout () {
+      localStorage.clear()
       this.$router.push({
-        name:'login'
+        name: 'login'
       })
-      this.$message.warning("已退出")
+      this.$message.warning('已退出')
     }
   }
-};
+}
 </script>
 
 <style>
