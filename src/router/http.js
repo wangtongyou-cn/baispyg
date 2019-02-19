@@ -8,6 +8,7 @@ HttpServer.install = function (Vue, options) {
   axios.interceptors.request.use(function (config) {
     // console.log('请求被拦截了')
     if (config.url !== 'login') {
+      const AUTH_TOKEN = localStorage.getItem('token')
       // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN
       config.headers['Authorization'] = AUTH_TOKEN
     }
