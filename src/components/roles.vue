@@ -80,7 +80,8 @@
         :data="treelist"
         show-checkbox
         node-key="id"
-        :default-expanded-keys="arrExpand"
+        default-expand-all
+      
         :default-checked-keys="arrCheck"
         :props="defaultProps"
       ></el-tree>
@@ -128,7 +129,7 @@ export default {
       }
     },
     // 分配权限中的打开对话框
-    async showDiaSetrights() {
+    async showDiaSetrights(role) {
       // 获取数据
       const res = await this.$http.get(`rights/tree`);
       console.log(res);
@@ -138,7 +139,21 @@ export default {
       } = res.data;
       if (status === 200) {
         this.treelist = data;
-      };
+      
+      //获取当前角色拥有的id
+      const temp2 = [];
+      role.children.forEach(item1 => {
+        // temp2.push(item1.id)
+        item1.children.forEach(item2 => {
+          // temp2.push(item2.id);
+          item2.children.forEach(item3 => {
+            temp2.push(item3.id);
+          })
+        })
+      })
+      // console.log(temp2)
+      this.arrCheck = temp2;;
+    };
       this.dialogFormVisible = true;
     },
 
