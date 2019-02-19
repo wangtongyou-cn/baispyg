@@ -14,67 +14,57 @@
       </el-row>
     </el-header>
     <el-container>
-
-      <el-aside width="200px" class="aside">
+      <!-- <el-aside width="200px" class="aside">
         <el-menu
           default-active="2"
           class="el-menu-vertical-demo"
-
           background-color="#fff"
           text-color="black"
           active-text-color="#ffd04b"
           :unique-opened="true"
           :router="true"
         >
-          <el-submenu index="1">
+          <el-submenu :index="item1.order+''" v-for="(item1,i) in menus" :key="item1.id">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>{{item1.authName}}</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="users"><i class="el-icon-menu"></i>用户列表</el-menu-item>
+              <el-menu-item
+                :index="item2.path+''"
+                v-for="(item2,i) in item1.children"
+                :key="item2.id"
+              >
+                <i class="el-icon-menu"></i>
+                <span>{{item2.authName}}</span>
+              </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>权限管理</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="roles"><i class="el-icon-menu"></i>角色列表</el-menu-item>
-              <el-menu-item index="rights"><i class="el-icon-menu"></i>权限列表</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="3">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>商品管理</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="1-1"><i class="el-icon-menu"></i>商品列表</el-menu-item>
-               <el-menu-item index="1-1"><i class="el-icon-menu"></i>分类参数</el-menu-item>
-                <el-menu-item index="1-1"><i class="el-icon-menu"></i>商品分类</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="4">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>订单管理</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="1-1"><i class="el-icon-menu"></i>订单列表</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="5">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>数据统计</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="1-1"><i class="el-icon-menu"></i>数据报表</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
+        </el-menu>
+      </el-aside> -->
 
+      <el-aside class="aside" width="200px">
+        <el-menu
+          :unique-opened="true"
+          :router="true"
+          default-active="2"
+          class="el-menu-vertical-demo"
+        >
+          <el-submenu :index="item1.order+''" v-for="(item1,i) in menus" :key="item1.id">
+            <template slot="title">
+              <i class="el-icon-location"></i>
+              <span>{{item1.authName}}</span>
+            </template>
+
+            <el-menu-item
+              :index="item2.path+''"
+              v-for="(item2,i) in item1.children"
+              :key="item2.id"
+            >
+              <i class="el-icon-menu"></i>
+              <span>{{item2.authName}}</span>
+            </el-menu-item>
+          </el-submenu>
         </el-menu>
       </el-aside>
 
@@ -87,26 +77,40 @@
 
 <script>
 export default {
+  data() {
+    return {
+      menus: []
+    };
+  },
   // 检查用户是否登录 token
-  beforeMount () {
-    if (!localStorage.getItem('token')) {
-      this.$router.push({
-        name: 'login'
-      })
-      this.$message.warning('请先登录')
-    }
+  beforeMount() {},
+  mounted() {},
+  created() {
+    this.getMenus();
   },
   methods: {
-    // 退出按钮
-    handleLoginout () {
-      localStorage.clear()
+    // 动态导航
+    async getMenus() {
+      const res = await this.$http.get(`menus`);
+      console.log(res)
+      const {
+        meta: { msg, status },
+        data
+      } = res.data;
+      if (status === 200) {
+        this.menus = data;
+      }
+    },
+
+    handleLoginout() {
+      localStorage.clear();
       this.$router.push({
-        name: 'login'
-      })
-      this.$message.warning('已退出')
+        name: "login"
+      });
+      this.$message.warning("已退出");
     }
   }
-}
+};
 </script>
 
 <style>
