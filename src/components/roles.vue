@@ -77,17 +77,17 @@
     <el-dialog title="分配权限" :visible.sync="dialogFormVisible">
       <!-- 树形 -->
       <el-tree
+        ref="treeDom"
         :data="treelist"
         show-checkbox
         node-key="id"
         default-expand-all
-      
         :default-checked-keys="arrCheck"
         :props="defaultProps"
       ></el-tree>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="setRights()">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -105,6 +105,7 @@ export default {
         label: "authName",
         children: "children"
       },
+      currRoleId: -1,
       dialogFormVisible: false
     };
   },
@@ -112,6 +113,29 @@ export default {
     this.getRoles();
   },
   methods: {
+    //分配权限,发送请求
+    async setRights() {
+      // const arr1 = this.$refs.treeDom.getCheckedkeys();
+      // const arr2 = this.$refs.treeDom.getHalfCheckedkeys();
+     const arr1 = this.$refs.treeDom.getCheckedKeys()
+      const arr2 = this.$refs.treeDom.getHalfCheckedKeys();
+      //  console.log(arr1)
+      // console.log(arr2)
+      const arr = [...arr1,...arr2];
+      const res = await this.$http.post(`roles/${this.currRoleId}/rights`,{
+        rids: arr.join(",")
+        
+      });
+
+      const {
+        meta: { msg, status },
+        data
+      } = res.data;
+      if (status === 200) {
+        this.dialogFormVisible = false;
+        this.getRoles() 
+      }
+    },
     //取消权限
     async deleRights(role, rights) {
       const res = await this.$http.delete(
@@ -130,6 +154,7 @@ export default {
     },
     // 分配权限中的打开对话框
     async showDiaSetrights(role) {
+      this.currRoleId = role.id;
       // 获取数据
       const res = await this.$http.get(`rights/tree`);
       console.log(res);
@@ -181,7 +206,5 @@ export default {
 }
 .level1 {
   margin-bottom: 20px;
-}
-.level2 {
 }
 </style>
