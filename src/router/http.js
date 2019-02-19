@@ -8,7 +8,7 @@ HttpServer.install = function (Vue, options) {
 
   // 所有请求发起后,需要筛选
   axios.interceptors.request.use(function (config) {
-    console.log('请求被拦截了')
+    // console.log('请求被拦截了')
     if (config.url !== 'login') {
       // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN
       config.headers['Authorization'] = AUTH_TOKEN
