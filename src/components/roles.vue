@@ -11,19 +11,33 @@
           <!-- 一级 -->
           <el-row class="level1" v-for="(item1,i) in scope.row.children" :key="item1.id">
             <el-col :span="4">
-              <el-tag @close="deleRights(scope.row,item1)" closable type="success">{{item1.authName}}</el-tag>
+              <el-tag
+                @close="deleRights(scope.row,item1)"
+                closable
+                type="success"
+              >{{item1.authName}}</el-tag>
               <i class="el-icon-arrow-right"></i>
             </el-col>
             <!-- 二级 -->
             <el-col :span="20">
               <el-row class="level2" v-for="(item2,i) in item1.children" :key="item2.id">
                 <el-col :span="4">
-                  <el-tag @close="deleRights(scope.row,item2)" closable type="warning">{{item2.authName}}</el-tag>
-                    <i class="el-icon-arrow-right"></i>
+                  <el-tag
+                    @close="deleRights(scope.row,item2)"
+                    closable
+                    type="warning"
+                  >{{item2.authName}}</el-tag>
+                  <i class="el-icon-arrow-right"></i>
                 </el-col>
                 <el-col :span="20">
                   <!-- 三级 -->
-                  <el-tag @close="deleRights(scope.row,item3)" closable type="info" v-for="(item3,i) in item2.children" :key="item3.id">{{item3.authName}}</el-tag>
+                  <el-tag
+                    @close="deleRights(scope.row,item3)"
+                    closable
+                    type="info"
+                    v-for="(item3,i) in item2.children"
+                    :key="item3.id"
+                  >{{item3.authName}}</el-tag>
                 </el-col>
               </el-row>
             </el-col>
@@ -59,6 +73,22 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 对话框 -->
+    <el-dialog title="分配权限" :visible.sync="dialogFormVisible">
+      <!-- 树形 -->
+      <el-tree
+        :data="treelist"
+        show-checkbox
+        node-key="id"
+        :default-expanded-keys="arrExpand"
+        :default-checked-keys="arrCheck"
+        :props="defaultProps"
+      ></el-tree>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -66,7 +96,15 @@
 export default {
   data() {
     return {
-      roles: []
+      roles: [],
+      treelist: [],
+      arrCheck: [],
+      arrExpand: [],
+      defaultProps: {
+        label: "authName",
+        children: "children"
+      },
+      dialogFormVisible: false
     };
   },
   created() {
@@ -74,20 +112,36 @@ export default {
   },
   methods: {
     //取消权限
-    async deleRights(role,rights) {
-      const res = await this.$http.delete(`roles/${role.id}/rights/${rights.id}`)
+    async deleRights(role, rights) {
+      const res = await this.$http.delete(
+        `roles/${role.id}/rights/${rights.id}`
+      );
       // console.log(res)
       const {
         meta: { msg, status },
         data
       } = res.data;
       if (status === 200) {
-        this.$message.success('删除成功')
+        this.$message.success("删除成功");
         // this.getRoles()
-        role.children=data;
+        role.children = data;
       }
     },
-    showDiaSetrights() {},
+    // 分配权限中的打开对话框
+    async showDiaSetrights() {
+      // 获取数据
+      const res = await this.$http.get(`rights/tree`);
+      console.log(res);
+      const {
+        meta: { msg, status },
+        data
+      } = res.data;
+      if (status === 200) {
+        this.treelist = data;
+      };
+      this.dialogFormVisible = true;
+    },
+
     async getRoles() {
       const res = await this.$http.get(`roles`);
       // console.log(res);
@@ -110,10 +164,9 @@ export default {
 .btn {
   margin-top: 20px;
 }
-.level1{
+.level1 {
   margin-bottom: 20px;
 }
-.level2{
- 
+.level2 {
 }
 </style>
