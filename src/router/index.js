@@ -3,32 +3,40 @@ import Router from 'vue-router'
 import {
   Message
 } from 'element-ui'
-import Login from '../components/login.vue'
-import Home from '../components/home.vue'
+
+// import Login from '../components/login.vue'
+// webpack -> @->src
+import Login from '@/components/login.vue'
+import Home from '@/components/home.vue'
 import Users from '@/components/users.vue'
 import Rights from '@/components/rights.vue'
 import Roles from '@/components/roles.vue'
+import Goodsadd from '@/components/goodsadd.vue'
 Vue.use(Router)
-
 const router = new Router({
   routes: [{
     path: '/',
     name: 'home',
     component: Home,
     children: [{
-        path: 'users',
-        name: '/users',
+        name: 'users',
+        path: '/users',
         component: Users
       },
       {
-        path: 'rights',
-        name: '/rights',
+        name: 'rights',
+        path: '/rights',
         component: Rights
       },
       {
-        path: 'roles',
-        name: '/roles',
+        name: 'roles',
+        path: '/roles',
         component: Roles
+      },
+      {
+        name: 'goodsadd',
+        path: '/goods',
+        component: Goodsadd
       }
     ]
   }, {
@@ -38,21 +46,30 @@ const router = new Router({
   }]
 })
 
-// 路由守卫
 router.beforeEach((to, from, next) => {
+  // 如果要去的是login -> next()
   if (to.name === 'login') {
-    next()
+    next();
   } else {
-    const token = localStorage.getItem("token")
-    if(!token) {
-      Message.warning("请先登录")
+    // 如果要去的不是login ->
+    //  2.1 !token -> 去登录
+    const token = localStorage.getItem("token");
+    if (!token) {
+      //提示
+      // this.$message.warning("请先登录!");->
+      Message.warning("请先登录!");
+
+      //  this.$router.push({name:'login'})
+      // $router
       router.push({
         name: 'login'
       })
       return;
     }
-    next()
+    //  2.2 token  -> next()
+    next();
   }
+
 })
 
-export default router
+export default router;
