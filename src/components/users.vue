@@ -109,7 +109,7 @@
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
+        <el-button>取 消</el-button>
         <el-button type="primary" @click="addUser()">确 定</el-button>
       </div>
     </el-dialog>
@@ -129,7 +129,7 @@
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
-        <el-button type="primary" @click="editUser()">确 定</el-button>
+        <el-button type="primary">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 分配角色 -->
