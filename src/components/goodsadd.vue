@@ -58,16 +58,15 @@ export default {
         goods_number: "",
         goods_weight: "",
         goods_introduce: "",
-        prices: "",
-        attrs: ""
+        prices: [],
+        attrs: []
       },
       // 级联选择器数据
       options: [],
       selectedOptions:[],
       defaultProp: {
-        children: "cat_name",
-        label: "cat_id",
-        value: "children"
+        label: "cat_name",
+        value: "cat_id"
       }
     };
    
@@ -77,7 +76,7 @@ export default {
   },
     methods: {
       async getGoodsCate(){
-        const res = await this.$http.get(`categories`);
+        const res = await this.$http.get(`categories?type=3`);
         console.log(res)
         const {meta: {msg,status},data} = res.data;
         if(status === 200) {
