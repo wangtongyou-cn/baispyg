@@ -12,7 +12,7 @@
     </el-steps>
     <!-- 标签页 -->
     <el-form :model="form" label-position="top" label-width="80px" class="form">
-      <el-tabs v-model="active" tab-position="left">
+      <el-tabs v-model="active" tab-position="left" @tab-click="changeTab()">
         <el-tab-pane name="1" label="基本信息">
           <el-form-item label="商品名称">
             <el-input v-model="form.goods_name"></el-input>
@@ -30,6 +30,7 @@
             <!-- <el-input v-model="form.goods_cat"></el-input> -->
             <!-- 配置表单数据  级联选择器  -->
             <el-cascader
+              clearable
               expand-trigger="hover"
               :options="options"
               :props="defaultProp"
@@ -38,7 +39,15 @@
             ></el-cascader>
           </el-form-item>
         </el-tab-pane>
-        <el-tab-pane name="2" label="商品参数">商品参数</el-tab-pane>
+        <!-- 复选框组 -->
+        <el-tab-pane name="2" label="商品参数">
+          <el-form-item label="写死一个">
+            <el-checkbox-group v-model="checkList">
+              <el-checkbox label="复选框 A"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+        </el-tab-pane>
+
         <el-tab-pane name="3" label="商品属性">商品属性</el-tab-pane>
         <el-tab-pane name="4" label="商品图片">商品图片</el-tab-pane>
         <el-tab-pane name="5" label="商品内容">商品内容</el-tab-pane>
@@ -63,28 +72,57 @@ export default {
       },
       // 级联选择器数据
       options: [],
-      selectedOptions:[],
+      selectedOptions: [],
       defaultProp: {
         label: "cat_name",
-        value: "cat_id"
-      }
+        value: "cat_id",
+        children: "children"
+      },
+      // 复选框组数据
+      checkList: [],
+      arrDy: []
     };
-   
   },
-    created() {
+  created() {
     this.getGoodsCate();
   },
-    methods: {
-      async getGoodsCate(){
-        const res = await this.$http.get(`categories?type=3`);
-        console.log(res)
-        const {meta: {msg,status},data} = res.data;
-        if(status === 200) {
-          this.options = data;
+  methods: {
+    // 点击tab触发
+    async changeTab() {
+      // 点第二个
+      if (this.active === "2") {
+        if (this.selectedOptions.length !== 3) {
+          // 如果是三级分类
+          this.$message.error("请先选择三级分类");
+          return;
         }
-      },
-      handleChange(){}
-    }
+        // 获取动态参数数据
+        const res = await this.$http.get(
+          `categories/${this.selectedOptions[2]}/attributes?sel=many`
+        );
+        console.log(res);
+        const {
+          meta: { msg, status },
+          data
+        } = res.data;
+        if (status === 200) {
+          this.arrDy = data;
+        }
+      }
+    },
+    async getGoodsCate() {
+      const res = await this.$http.get(`categories?type=3`);
+      // console.log(res)
+      const {
+        meta: { msg, status },
+        data
+      } = res.data;
+      if (status === 200) {
+        this.options = data;
+      }
+    },
+    handleChange() {}
+  }
 };
 </script>
 
