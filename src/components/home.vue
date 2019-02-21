@@ -93,7 +93,7 @@ export default {
     // 动态导航
     async getMenus() {
       const res = await this.$http.get(`menus`);
-      console.log(res)
+      // console.log(res)
       const {
         meta: { msg, status },
         data
