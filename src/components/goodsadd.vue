@@ -14,21 +14,29 @@
     <el-form :model="form" label-position="top" label-width="80px" class="form">
       <el-tabs v-model="active" tab-position="left">
         <el-tab-pane name="1" label="基本信息">
-            <el-form-item label="商品名称">
-                <el-input v-model="form.goods_name"></el-input>
-            </el-form-item>
-             <el-form-item label="商品价格">
-                <el-input v-model="form.goods_price"></el-input>
-            </el-form-item>
-            <el-form-item label="商品重量">
-                <el-input v-model="form.goods_weight"></el-input>
-            </el-form-item>
-             <el-form-item label="商品数量">
-                <el-input v-model="form.goods_number"></el-input>
-            </el-form-item>
-             <el-form-item label="商品分类">
-                <el-input v-model="form.goods_cat"></el-input>
-            </el-form-item> 
+          <el-form-item label="商品名称">
+            <el-input v-model="form.goods_name"></el-input>
+          </el-form-item>
+          <el-form-item label="商品价格">
+            <el-input v-model="form.goods_price"></el-input>
+          </el-form-item>
+          <el-form-item label="商品重量">
+            <el-input v-model="form.goods_weight"></el-input>
+          </el-form-item>
+          <el-form-item label="商品数量">
+            <el-input v-model="form.goods_number"></el-input>
+          </el-form-item>
+          <el-form-item label="商品分类">
+            <!-- <el-input v-model="form.goods_cat"></el-input> -->
+            <!-- 配置表单数据  级联选择器  -->
+            <el-cascader
+              expand-trigger="hover"
+              :options="options"
+              :props="defaultProp"
+              v-model="selectedOptions"
+              @change="handleChange"
+            ></el-cascader>
+          </el-form-item>
         </el-tab-pane>
         <el-tab-pane name="2" label="商品参数">商品参数</el-tab-pane>
         <el-tab-pane name="3" label="商品属性">商品属性</el-tab-pane>
@@ -44,17 +52,40 @@ export default {
     return {
       active: "1",
       form: {
-        goods_name: '',
-        goods_cat:  '',
-        goods_price: '',
-        goods_number:"",
+        goods_name: "",
+        goods_cat: "",
+        goods_price: "",
+        goods_number: "",
         goods_weight: "",
-        goods_introduce:"",
+        goods_introduce: "",
         prices: "",
         attrs: ""
+      },
+      // 级联选择器数据
+      options: [],
+      selectedOptions:[],
+      defaultProp: {
+        children: "cat_name",
+        label: "cat_id",
+        value: "children"
       }
     };
-  }
+   
+  },
+    created() {
+    this.getGoodsCate();
+  },
+    methods: {
+      async getGoodsCate(){
+        const res = await this.$http.get(`categories`);
+        console.log(res)
+        const {meta: {msg,status},data} = res.data;
+        if(status === 200) {
+          this.options = data;
+        }
+      },
+      handleChange(){}
+    }
 };
 </script>
 
@@ -69,7 +100,7 @@ export default {
   margin: 20px 0;
 }
 .box {
-  height:100%
+  height: 100%;
 }
 .form {
   height: 350px;
