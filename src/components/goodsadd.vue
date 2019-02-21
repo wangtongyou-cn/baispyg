@@ -39,11 +39,11 @@
             ></el-cascader>
           </el-form-item>
         </el-tab-pane>
-        <!-- 复选框组 -->
+
         <el-tab-pane name="2" label="商品参数">
-          <el-form-item label="写死一个">
+          <el-form-item :label="item1.attr_name" v-for="(item1,i) in arrDy" :key="item1.attr_id">
             <el-checkbox-group v-model="checkList">
-              <el-checkbox label="复选框 A"></el-checkbox>
+              <el-checkbox :label="item2" v-for="(item2,i) in item1.attr_vals" :key="i"></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
         </el-tab-pane>
@@ -72,47 +72,52 @@ export default {
       },
       // 级联选择器数据
       options: [],
-      selectedOptions: [],
+      selectedOptions: [1, 3, 6],
       defaultProp: {
         label: "cat_name",
-        value: "cat_id",
-        children: "children"
+        value: "cat_id"
       },
-      // 复选框组数据
-      checkList: [],
-      arrDy: []
+      arrDy: [],
+      checkList: []
     };
   },
   created() {
     this.getGoodsCate();
   },
   methods: {
-    // 点击tab触发
     async changeTab() {
-      // 点第二个
       if (this.active === "2") {
         if (this.selectedOptions.length !== 3) {
-          // 如果是三级分类
           this.$message.error("请先选择三级分类");
           return;
         }
-        // 获取动态参数数据
         const res = await this.$http.get(
           `categories/${this.selectedOptions[2]}/attributes?sel=many`
         );
-        console.log(res);
+        //  console.log(res);
+
         const {
           meta: { msg, status },
           data
         } = res.data;
         if (status === 200) {
           this.arrDy = data;
+          this.arrDy.forEach(item => {
+          //   if (item.attr_vals.leng === 0) {
+          //     item.attr_vals = [];
+          //   } else {
+          //     item.attr_vals = item.attr_vals.trim().split(",");
+          //   } 
+          item.attr_vals=item.attr_vals.trim().length===0?[]:item.attr_vals.trim().split(",")
+          });
+         
         }
       }
     },
+
     async getGoodsCate() {
       const res = await this.$http.get(`categories?type=3`);
-      // console.log(res)
+
       const {
         meta: { msg, status },
         data
