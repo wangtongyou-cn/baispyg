@@ -137,9 +137,20 @@ export default {
         return {attr_id:item.attr_id,attr_vals:item.attr_vals};
       })
       this.form.attrs=[...arr1,...arr2]
-      // const res = await this.$http.post(
-      //     `goods`,this.form
-      //   );
+     
+      const res = await this.$http.post(`goods`,this.form);
+      console.log(res)
+      const {
+        meta: {msg, status},data
+      } =res.data;
+      if(status===201) {
+        this.$message.success(msg);
+        this.$router.push({
+          name: "goodslist"
+        })
+      } else {
+        console.log("添加失败")
+      }
     },
     //上传图片
     handleRemove(file,fileList) {
