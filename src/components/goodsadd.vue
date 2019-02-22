@@ -42,13 +42,14 @@
 
         <el-tab-pane name="2" label="商品参数">
           <el-form-item :label="item1.attr_name" v-for="(item1,i) in arrDy" :key="item1.attr_id">
-            <el-checkbox-group v-model="checkList">
-              <el-checkbox :label="item2" v-for="(item2,i) in item1.attr_vals" :key="i"></el-checkbox>
+            <el-checkbox-group v-model="item1.attr_vals">
+              <el-checkbox border :label="item2" v-for="(item2,i) in item1.attr_vals" :key="i"></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
         </el-tab-pane>
 
         <el-tab-pane name="3" label="商品属性">商品属性</el-tab-pane>
+
         <el-tab-pane name="4" label="商品图片">商品图片</el-tab-pane>
         <el-tab-pane name="5" label="商品内容">商品内容</el-tab-pane>
       </el-tabs>
@@ -78,7 +79,8 @@ export default {
         value: "cat_id"
       },
       arrDy: [],
-      checkList: []
+      checkList: [],
+      arrStaic: []
     };
   },
   created() {
@@ -86,34 +88,59 @@ export default {
   },
   methods: {
     async changeTab() {
-      if (this.active === "2") {
+      //   if(this.active==="3") {
+
+      //   };
+
+      if (this.active === "2"|| this.active === "3") {
         if (this.selectedOptions.length !== 3) {
           this.$message.error("请先选择三级分类");
           return;
         }
-        const res = await this.$http.get(
-          `categories/${this.selectedOptions[2]}/attributes?sel=many`
-        );
-        //  console.log(res);
+        // 获取静态数据
+        if (this.active === "3") {
+          const res = await this.$http.get(
+            `categories/${this.selectedOptions[2]}/attributes?sel=only`
+          );
+          const {
+            meta: { msg, status },
+            data
+          } = res.data;
+          if (status === 200) {
+            this.arrStaic = data;
+            console.log(this.arrStaic)
+            };
+          }
+        }
 
-        const {
-          meta: { msg, status },
-          data
-        } = res.data;
-        if (status === 200) {
-          this.arrDy = data;
-          this.arrDy.forEach(item => {
-          //   if (item.attr_vals.leng === 0) {
-          //     item.attr_vals = [];
-          //   } else {
-          //     item.attr_vals = item.attr_vals.trim().split(",");
-          //   } 
-          item.attr_vals=item.attr_vals.trim().length===0?[]:item.attr_vals.trim().split(",")
-          });
-         
+        // 动态参数数据
+        if (this.active === "2") {
+          const res = await this.$http.get(
+            `categories/${this.selectedOptions[2]}/attributes?sel=many`
+          );
+          //  console.log(res);
+
+          const {
+            meta: { msg, status },
+            data
+          } = res.data;
+          if (status === 200) {
+            this.arrDy = data;
+            this.arrDy.forEach(item => {
+              //   if (item.attr_vals.leng === 0) {
+              //     item.attr_vals = [];
+              //   } else {
+              //     item.attr_vals = item.attr_vals.trim().split(",");
+              //   }
+              item.attr_vals =
+                item.attr_vals.trim().length === 0
+                  ? []
+                  : item.attr_vals.trim().split(",");
+            });
+          }
         }
       }
-    },
+    ,
 
     async getGoodsCate() {
       const res = await this.$http.get(`categories?type=3`);
@@ -127,8 +154,9 @@ export default {
       }
     },
     handleChange() {}
+    }
   }
-};
+;
 </script>
 
 <style>
