@@ -103,7 +103,7 @@ export default {
         goods_number: "",
         goods_weight: "",
         goods_introduce: "",
-        prices: [],
+        pics: [],
         attrs: []
       },
       // 级联选择器数据
@@ -126,14 +126,36 @@ export default {
   },
   methods: {
     // 添加商品
-    addgoods(){},
+    async addgoods(){
+      this.form.goods_cat=this.selectedOptions.join(',');
+      
+      // this.form.attrs
+      const arr1 =this.arrDy.map((item)=> {
+        return {attr_id:item.attr_id,attr_vals:item.attr_vals};
+      });
+      const arr2=this.arrStaic.map((item)=> {
+        return {attr_id:item.attr_id,attr_vals:item.attr_vals};
+      })
+      this.form.attrs=[...arr1,...arr2]
+      // const res = await this.$http.post(
+      //     `goods`,this.form
+      //   );
+    },
     //上传图片
     handleRemove(file,fileList) {
-      console.log(file,fileList);
-      file.response.data.tmp_path;
+      // console.log(file,fileList);
+      // file.response.data.tmp_path
+      const Index =this.form.pics.findIndex((item)=>{
+        return item.pic===file.response.data.tmp_path;
+      })
+   
+      this.form.pics.splice(Index,1);
     },
     handleSuccess(response,file,fileList) {
-      console.log(response);
+      this.form.pics.push({
+        pic: response.data.tmp_path
+      })
+      // console.log(response);
     },
 
     async changeTab() {
