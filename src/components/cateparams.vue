@@ -25,12 +25,12 @@
             <template slot-scope="scope">
               <!-- <span>213</span> -->
               <el-tag
-                :key="tag"
-                v-for="tag in dynamicTags"
+                :key="i"
+                v-for="(item,i) in scope.row.attr_vals"
                 closable
                 :disable-transitions="false"
-                @close="handleClose(tag)"
-              >{{tag}}</el-tag>
+                @close="handleClose(item)"
+              >{{item}}</el-tag>
               <el-input
                 class="input-new-tag"
                 v-if="inputVisible"
@@ -40,7 +40,7 @@
                 @keyup.enter.native="handleInputConfirm"
                 @blur="handleInputConfirm"
               ></el-input>
-              <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+              <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New item</el-button>
             </template>
           </el-table-column>
           <el-table-column type="index" label="#" width="120"></el-table-column>
@@ -85,7 +85,7 @@ export default {
   methods: {
     //   动态tag相关方法
    handleClose(tag) {
-        this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+        .splice(this.dynamicTags.indexOf(tag), 1);
       },
 
       showInput() {
