@@ -37,8 +37,8 @@
                 v-model="inputValue"
                 ref="saveTagInput"
                 size="small"
-                @keyup.enter.native="handleInputConfirm"
-                @blur="handleInputConfirm"
+                @keyup.enter.native="handleInputConfirm(scope.row)"
+                @blur="handleInputConfirm(scope.row)"
               ></el-input>
               <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New item</el-button>
             </template>
@@ -84,8 +84,8 @@ export default {
   },
   methods: {
     //   动态tag相关方法
-   handleClose(tag) {
-        .splice(this.dynamicTags.indexOf(tag), 1);
+   handleClose(obj,item) {
+        obj.attr_vals.splice(this.dynamicTags.indexOf(item), 1);
       },
 
       showInput() {
@@ -95,10 +95,10 @@ export default {
         });
       },
 
-      handleInputConfirm() {
+      handleInputConfirm(obj,) {
         let inputValue = this.inputValue;
         if (inputValue) {
-          this.dynamicTags.push(inputValue);
+          obj.attr_vals.push(inputValue);
         }
         this.inputVisible = false;
         this.inputValue = '';
