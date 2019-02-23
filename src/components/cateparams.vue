@@ -15,6 +15,48 @@
         ></el-cascader>
       </el-form-item>
     </el-form>
+    <el-tabs type="border-card" v-model="active">
+      <el-tab-pane name="1" label="动态参数">
+        <el-button disable>设置动态参数</el-button>
+
+        <el-table height="450px" border stripe :data="arrDy" style="width: 100%">
+          <!-- 序号 -->
+          <el-table-column type="expand" width="120">
+            <template slot-scope="scope">
+              <!-- <span>213</span> -->
+              <el-tag
+                :key="tag"
+                v-for="tag in dynamicTags"
+                closable
+                :disable-transitions="false"
+                @close="handleClose(tag)"
+              >{{tag}}</el-tag>
+              <el-input
+                class="input-new-tag"
+                v-if="inputVisible"
+                v-model="inputValue"
+                ref="saveTagInput"
+                size="small"
+                @keyup.enter.native="handleInputConfirm"
+                @blur="handleInputConfirm"
+              ></el-input>
+              <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column type="index" label="#" width="120"></el-table-column>
+
+          <el-table-column prop="attr_name" label="属性名称"></el-table-column>
+
+          <el-table-column label="操作" width="100">
+            <template slot-scope="scope">
+              <el-button plain size="mini" type="primary" icon="el-icon-edit" circle></el-button>
+              <el-button plain size="mini" type="danger" icon="el-icon-delete" circle></el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="静态参数" name="2"></el-tab-pane>
+    </el-tabs>
   </el-card>
 </template>
 
@@ -22,6 +64,7 @@
 export default {
   data() {
     return {
+      active: "1",
       form: {},
       // 级联选择器数据
       options: [],
@@ -29,20 +72,66 @@ export default {
       defaultProp: {
         label: "cat_name",
         value: "cat_id"
-      }
+      },
+      arrDy: [],
+         dynamicTags: ['标签一', '标签二', '标签三'],
+        inputVisible: false,
+        inputValue: ''
     };
   },
   created() {
-    this.getGoodsCate()
+    this.getGoodsCate();
   },
   methods: {
-    handleChange() {
-        console.log("级联的change触发了")
+    //   动态tag相关方法
+   handleClose(tag) {
+        this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+      },
+
+      showInput() {
+        this.inputVisible = true;
+        this.$nextTick(_ => {
+          this.$refs.saveTagInput.$refs.input.focus();
+        });
+      },
+
+      handleInputConfirm() {
+        let inputValue = this.inputValue;
+        if (inputValue) {
+          this.dynamicTags.push(inputValue);
+        }
+        this.inputVisible = false;
+        this.inputValue = '';
+      },
+
+    async handleChange() {
+      //   console.log("级联的change触发了");
+      if (this.selectedOptions.length !== 3) {
+        this.$message.warning("请先选择三级分类");
+        return;
+      }
+      //  获取动态数据
+      const res = await this.$http.get(
+        `categories/${this.selectedOptions[2]}/attributes?sel=many`
+      );
+      const {
+        meta: { msg, status },
+        data
+      } = res.data;
+      if (status === 200) {
+        this.arrDy = data;
+        this.arrDy.forEach(item => {
+          item.attr_vals =
+            item.attr_vals.trim().length === 0
+              ? []
+              : item.attr_vals.trim().split(",");
+        });
+      }
     },
     // 获取三级分类
     async getGoodsCate() {
       const res = await this.$http.get(`categories?type=3`);
-        // console.log(res)
+      // console.log(res)
       const {
         meta: { msg, status },
         data
@@ -51,6 +140,8 @@ export default {
         this.options = data;
       }
     }
+   
+
   }
 };
 </script>
@@ -61,5 +152,20 @@ export default {
 }
 .elalert {
   margin-top: 20px;
+}
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
 }
 </style>
