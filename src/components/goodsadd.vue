@@ -70,12 +70,8 @@
           <el-form-item>
             <el-button @click="addgoods()">添加商品</el-button>
             <!-- 富文本 -->
-            <quill-editor
-            v-model="form.goods_intorduce"
-            
-            ></quill-editor>
+            <quill-editor v-model="form.goods_intorduce"></quill-editor>
           </el-form-item>
-          
         </el-tab-pane>
       </el-tabs>
     </el-form>
@@ -83,11 +79,11 @@
 </template>
 <script>
 // 引入富文本
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
- 
-import { quillEditor } from 'vue-quill-editor'
+import "quill/dist/quill.core.css";
+import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
+
+import { quillEditor } from "vue-quill-editor";
 
 export default {
   components: {
@@ -117,7 +113,7 @@ export default {
       checkList: [],
       arrStaic: [],
       headers: {
-        Authorization:localStorage.getItem('token')
+        Authorization: localStorage.getItem("token")
       }
     };
   },
@@ -126,46 +122,47 @@ export default {
   },
   methods: {
     // 添加商品
-    async addgoods(){
-      this.form.goods_cat=this.selectedOptions.join(',');
-      
+    async addgoods() {
+      this.form.goods_cat = this.selectedOptions.join(",");
+
       // this.form.attrs
-      const arr1 =this.arrDy.map((item)=> {
-        return {attr_id:item.attr_id,attr_vals:item.attr_vals};
+      const arr1 = this.arrDy.map(item => {
+        return { attr_id: item.attr_id, attr_vals: item.attr_vals };
       });
-      const arr2=this.arrStaic.map((item)=> {
-        return {attr_id:item.attr_id,attr_vals:item.attr_vals};
-      })
-      this.form.attrs=[...arr1,...arr2]
-     
-      const res = await this.$http.post(`goods`,this.form);
-      console.log(res)
+      const arr2 = this.arrStaic.map(item => {
+        return { attr_id: item.attr_id, attr_vals: item.attr_vals };
+      });
+      this.form.attrs = [...arr1, ...arr2];
+
+      const res = await this.$http.post(`goods`, this.form);
+      console.log(res);
       const {
-        meta: {msg, status},data
-      } =res.data;
-      if(status===201) {
+        meta: { msg, status },
+        data
+      } = res.data;
+      if (status === 201) {
         this.$message.success(msg);
         this.$router.push({
           name: "goodslist"
-        })
+        });
       } else {
-        console.log("添加失败")
+        console.log("添加失败");
       }
     },
     //上传图片
-    handleRemove(file,fileList) {
+    handleRemove(file, fileList) {
       // console.log(file,fileList);
       // file.response.data.tmp_path
-      const Index =this.form.pics.findIndex((item)=>{
-        return item.pic===file.response.data.tmp_path;
-      })
-   
-      this.form.pics.splice(Index,1);
+      const Index = this.form.pics.findIndex(item => {
+        return item.pic === file.response.data.tmp_path;
+      });
+
+      this.form.pics.splice(Index, 1);
     },
-    handleSuccess(response,file,fileList) {
+    handleSuccess(response, file, fileList) {
       this.form.pics.push({
         pic: response.data.tmp_path
-      })
+      });
       // console.log(response);
     },
 
@@ -259,6 +256,6 @@ export default {
   overflow: auto;
 }
 .ql-container {
-  min-height: 200px
+  min-height: 200px;
 }
 </style>

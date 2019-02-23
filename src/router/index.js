@@ -13,7 +13,7 @@ import Rights from '@/components/rights.vue'
 import Roles from '@/components/roles.vue'
 import Goodsadd from '@/components/goodsadd.vue'
 import Goodslist from '../components/goodslist.vue'
-import Cateparms from '../components/cateparms.vue'
+import Cateparams from '../components/cateparams.vue'
 Vue.use(Router)
 const router = new Router({
   routes: [{
@@ -48,7 +48,7 @@ const router = new Router({
       {
         name: 'params',
         path: '/params',
-        component: Cateparms
+        component: Cateparams
       }
     ]
   }, {
