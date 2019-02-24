@@ -15,7 +15,8 @@
         ></el-cascader>
       </el-form-item>
     </el-form>
-    <el-tabs type="border-card" v-model="active">
+
+    <el-tabs @tab-click="changTab()" type="border-card" v-model="active">
       <el-tab-pane name="1" label="动态参数">
         <el-button disable>设置动态参数</el-button>
 
@@ -55,7 +56,22 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="静态参数" name="2"></el-tab-pane>
+      <el-tab-pane label="静态参数" name="2">
+        <el-button disable>设置静态参数</el-button>
+        <el-table height="450px" border stripe :data="arrStaic" style="width: 100%">
+          <!-- 序号 -->            
+          <el-table-column type="index" label="#" width="120"></el-table-column>
+
+          <el-table-column prop="attr_name" label="属性名称"></el-table-column>
+<el-table-column prop="attr_vals" label="属性值"></el-table-column>
+          <el-table-column label="操作" width="100">
+            <template slot-scope="scope">
+              <el-button plain size="mini" type="primary" icon="el-icon-edit" circle></el-button>
+              <el-button plain size="mini" type="danger" icon="el-icon-delete" circle></el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
     </el-tabs>
   </el-card>
 </template>
@@ -74,59 +90,112 @@ export default {
         value: "cat_id"
       },
       arrDy: [],
-         dynamicTags: ['标签一', '标签二', '标签三'],
-        inputVisible: false,
-        inputValue: ''
+      arrStaic: [],
+      // dynamicTags: ["标签一", "标签二", "标签三"],
+      inputVisible: false,
+      inputValue: ""
     };
   },
   created() {
     this.getGoodsCate();
   },
+
   methods: {
+    
     //   动态tag相关方法
-   handleClose(obj,item) {
-       obj.attr_vals .splice(obj.attr_vals.indexOf(item), 1);
-      },
+    async handleClose(obj, item) {
+      obj.attr_vals.splice(obj.attr_vals.indexOf(item), 1);
 
-      showInput() {
-        this.inputVisible = true;
-        this.$nextTick(_ => {
-          this.$refs.saveTagInput.$refs.input.focus();
-        });
-      },
+      const res = await this.$http.put(
+        `categories/${this.selectedOptions[2]}/attributes/${obj.attr_id}`,
+        {
+          attr_name: obj.attr_name,
+          attr_sel: obj.attr_sel,
 
-      handleInputConfirm() {
-        let inputValue = this.inputValue;
-        if (inputValue) {
-          this.dynamicTags.push(inputValue);
+          attr_vals: obj.attr_vals.join(",")
         }
-        this.inputVisible = false;
-        this.inputValue = '';
-      },
-
-    async handleChange() {
-      //   console.log("级联的change触发了");
-      if (this.selectedOptions.length !== 3) {
-        this.$message.warning("请先选择三级分类");
-        return;
-      }
-      //  获取动态数据
-      const res = await this.$http.get(
-        `categories/${this.selectedOptions[2]}/attributes?sel=many`
       );
-      const {
-        meta: { msg, status },
-        data
-      } = res.data;
-      if (status === 200) {
-        this.arrDy = data;
-        this.arrDy.forEach(item => {
-          item.attr_vals =
-            item.attr_vals.trim().length === 0
-              ? []
-              : item.attr_vals.trim().split(",");
-        });
+      console.log(res);
+    },
+
+    showInput() {
+      this.inputVisible = true;
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+
+    async handleInputConfirm(obj) {
+      let inputValue = this.inputValue;
+      if (inputValue) {
+        obj.attr_vals.push(inputValue);
+
+        const res = await this.$http.put(
+          `categories/${this.selectedOptions[2]}/attributes/${obj.attr_id}`,
+          {
+            attr_name: obj.attr_name,
+            attr_sel: obj.attr_sel,
+
+            attr_vals: obj.attr_vals.join(",")
+          }
+        );
       }
+      this.inputVisible = false;
+      this.inputValue = "";
+    },
+    // 获取静态或动态数据
+    async getDyorStatic() {
+        if (this.selectedOptions.length !== 3) {
+        this.$message.warning("请先选择三级分类");
+          if(this.active === "1") {
+            this.arrDy = [];
+          }
+           if(this.active === "2") {
+            this.arrStaic = [];
+          }
+        return;
+        }
+        if (this.active === "1") {
+          const res = await this.$http.get(
+            `categories/${this.selectedOptions[2]}/attributes?sel=many`
+          );
+          const {
+            meta: { msg, status },
+            data
+          } = res.data;
+          if (status === 200) {
+            this.arrDy = data;
+            this.arrDy.forEach(item => {
+              item.attr_vals =
+                item.attr_vals.trim().length === 0
+                  ? []
+                  : item.attr_vals.trim().split(",");
+            });
+          }
+        }
+        if (this.active === "2") {
+          const res = await this.$http.get(
+            `categories/${this.selectedOptions[2]}/attributes?sel=only`
+          );
+          const {
+            meta: { msg, status },
+            data
+          } = res.data;
+          if (status === 200) {
+            this.arrStaic = data;
+            // console.log(this.arrStaic);
+          }
+        }
+    },
+// 改变tab
+    changTab(){
+      // this.handleChange()
+      this.getDyorStatic()
+    },
+    async handleChange() {
+      // 读取动态
+      this.getDyorStatic() 
+      
     },
     // 获取三级分类
     async getGoodsCate() {
@@ -140,8 +209,6 @@ export default {
         this.options = data;
       }
     }
-   
-
   }
 };
 </script>
