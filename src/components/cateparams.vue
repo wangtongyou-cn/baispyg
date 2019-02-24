@@ -29,7 +29,7 @@
                 v-for="(item,i) in scope.row.attr_vals"
                 closable
                 :disable-transitions="false"
-                @close="handleClose(item)"
+                @close="handleClose(scope.row,item)"
               >{{item}}</el-tag>
               <el-input
                 class="input-new-tag"
@@ -74,9 +74,9 @@ export default {
         value: "cat_id"
       },
       arrDy: [],
-         dynamicTags: ['标签一', '标签二', '标签三'],
-        inputVisible: false,
-        inputValue: ''
+      dynamicTags: ["标签一", "标签二", "标签三"],
+      inputVisible: false,
+      inputValue: ""
     };
   },
   created() {
@@ -84,25 +84,46 @@ export default {
   },
   methods: {
     //   动态tag相关方法
-   handleClose(obj,item) {
-        obj.attr_vals.splice(this.dynamicTags.indexOf(item), 1);
-      },
+    async handleClose(obj, item) {
+      obj.attr_vals.splice(obj.attr_vals.indexOf(item), 1);
 
-      showInput() {
-        this.inputVisible = true;
-        this.$nextTick(_ => {
-          this.$refs.saveTagInput.$refs.input.focus();
-        });
-      },
-
-      handleInputConfirm(obj) {
-        let inputValue = this.inputValue;
-        if (inputValue) {
-          obj.attr_vals.push(inputValue);
+      const res = await this.$http.put(
+        `categories/${this.selectedOptions[2]}/attributes/${obj.attr_id}`,
+        {
+          attr_name: obj.attr_name,
+          attr_sel: obj.attr_sel,
+          
+          attr_vals: obj.attr_vals.join(",")
         }
-        this.inputVisible = false;
-        this.inputValue = '';
-      },
+      );
+      console.log(res)
+    },
+
+    showInput() {
+      this.inputVisible = true;
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+
+    async handleInputConfirm(obj) {
+      let inputValue = this.inputValue;
+      if (inputValue) {
+        obj.attr_vals.push(inputValue);
+
+        const res = await this.$http.put(
+        `categories/${this.selectedOptions[2]}/attributes/${obj.attr_id}`,
+        {
+          attr_name: obj.attr_name,
+          attr_sel: obj.attr_sel,
+          
+          attr_vals: obj.attr_vals.join(",")
+        }
+      );
+      }
+      this.inputVisible = false;
+      this.inputValue = "";
+    },
 
     async handleChange() {
       //   console.log("级联的change触发了");
@@ -140,8 +161,6 @@ export default {
         this.options = data;
       }
     }
-   
-
   }
 };
 </script>
