@@ -14,6 +14,7 @@ import Roles from '@/components/roles.vue'
 import Goodsadd from '@/components/goodsadd.vue'
 import Goodslist from '../components/goodslist.vue'
 import Cateparams from '../components/cateparams.vue'
+import Goodcate from '../components/goodcate.vue'
 Vue.use(Router)
 const router = new Router({
   routes: [{
@@ -49,6 +50,11 @@ const router = new Router({
         name: 'params',
         path: '/params',
         component: Cateparams
+      },
+      {
+        name: 'categories',
+        path: '/categories',
+        component: Goodcate
       }
     ]
   }, {
