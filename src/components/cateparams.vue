@@ -29,7 +29,7 @@
                 v-for="(item,i) in scope.row.attr_vals"
                 closable
                 :disable-transitions="false"
-                @close="handleClose(item)"
+                @close="handleClose(scope.row,item)"
               >{{item}}</el-tag>
               <el-input
                 class="input-new-tag"
@@ -37,8 +37,8 @@
                 v-model="inputValue"
                 ref="saveTagInput"
                 size="small"
-                @keyup.enter.native="handleInputConfirm"
-                @blur="handleInputConfirm"
+                @keyup.enter.native="handleInputConfirm(scope.row)"
+                @blur="handleInputConfirm(scope.row)"
               ></el-input>
               <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New item</el-button>
             </template>
@@ -84,8 +84,8 @@ export default {
   },
   methods: {
     //   动态tag相关方法
-   handleClose(tag) {
-        .splice(this.dynamicTags.indexOf(tag), 1);
+   handleClose(obj,item) {
+       obj.attr_vals .splice(obj.attr_vals.indexOf(item), 1);
       },
 
       showInput() {
