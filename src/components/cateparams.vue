@@ -95,7 +95,7 @@ export default {
         });
       },
 
-      handleInputConfirm(obj,) {
+      handleInputConfirm(obj) {
         let inputValue = this.inputValue;
         if (inputValue) {
           obj.attr_vals.push(inputValue);
